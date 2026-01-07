@@ -1,0 +1,18 @@
+api_version = "2025-07"
+
+[[extensions]]
+name = "t:name"
+handle = "discount-function-progressive"
+uid = "8423e940-245e-99ff-dd59-72b954c1f7cb5230c398"
+type = "function"
+
+description = "t:description"
+
+  [[extensions.targeting]]
+  target = "cart.lines.discounts.generate.run"
+  input_query = "src/cart_lines_discounts_generate_run.graphql"
+  export = "cart-lines-discounts-generate-run"
+
+  [extensions.build]
+  command = ""
+  path = "dist/function.wasm"

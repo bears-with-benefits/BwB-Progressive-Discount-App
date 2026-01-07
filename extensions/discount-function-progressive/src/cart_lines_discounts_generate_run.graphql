@@ -1,0 +1,35 @@
+query Input {
+  cart {
+    cost {
+      totalAmount {
+        amount
+        currencyCode
+      }
+    }
+    step_1: attribute(key: "step_1") {
+      key
+      value
+    }
+    step_2: attribute(key: "step_2") {
+      key
+      value
+    }
+    step_3: attribute(key: "step_3") {
+      key
+      value
+    }
+    progressCodes: attribute(key: "progression_codes") {
+      key
+      value
+    }
+    activeCodes: attribute(key: "active_codes") {
+      key
+      value
+    }
+    progressiveMode: attribute(key: "progressive_mode") {
+      key
+      value
+    }
+  }
+  triggeringDiscountCode
+}

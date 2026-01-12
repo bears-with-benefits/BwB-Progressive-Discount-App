@@ -1,3 +1,5 @@
+/* global shopify */
+
 import {
   reactExtension,
   useAttributes,
@@ -16,6 +18,9 @@ function App() {
   const totalAmount = useTotalAmount();       // total after discounts
   const subtotalAmount = useSubtotalAmount(); // subtotal before discounts
   const discountCodes = useDiscountCodes();   // entered discount codes, e.g. GETMORE
+
+  // Access Shopify's global i18n object for translations
+  const i18n = shopify.i18n;
 
   // Map attributes into a plain object for convenience
   const attrMap = useMemo(
@@ -106,13 +111,17 @@ function App() {
     return fromDiscountHook || "your discount";
   }, [attrMap, discountCodes]);
 
-  // Calculate absolute savings (clamped to >= 0)
-  const savings = Math.max(0, originalSubtotal - totalAfterDiscounts);
+  // Build localized message using Shopify i18n
+  // "progressive.message" is defined in locales/*.json files
+  const message = i18n.translate("progressive.message", {
+    percent: activeTier.percentage,
+    code: triggerCode,
+  });
 
   return (
     <BlockStack spacing="tight">
       <Text type="strong" tone="info">
-      You’re getting {activeTier.percentage}% off with {triggerCode}!   🐻 🎉
+        {message}
       </Text>
     </BlockStack>
   );

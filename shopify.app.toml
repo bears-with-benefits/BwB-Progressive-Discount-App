@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "a776fbf56ca4196d00d6dfeeb7a98211"
-name = "bwb-getmore-remix"
+name = "BwB-Progressive-Discount-App"
 application_url = "https://example.com"
 embedded = true
 

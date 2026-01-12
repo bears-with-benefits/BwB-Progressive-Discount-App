@@ -1,5 +1,5 @@
 {
-  "name": "bwb-getmore-remix",
+  "name": "bwb-progressive-discount",
   "private": true,
   "scripts": {
     "build": "remix vite:build",

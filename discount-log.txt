@@ -1,0 +1,2 @@
+2026-01-12T11:59:50.182Z | code=BEARY | codeDiscountId=gid://shopify/DiscountCodeNode/1793800634705 | automaticDiscountId=gid://shopify/DiscountAutomaticNode/1793800667473
+2026-01-12T14:31:09.092Z | code=FASTER | codeDiscountId=gid://shopify/DiscountCodeNode/1793815707985 | automaticDiscountId=gid://shopify/DiscountAutomaticNode/1793815740753

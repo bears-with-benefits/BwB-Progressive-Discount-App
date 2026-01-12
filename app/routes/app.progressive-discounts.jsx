@@ -1,6 +1,6 @@
-   import { json } from "@remix-run/node";
-   import { Form, useActionData } from "@remix-run/react";
-   import { authenticate } from "../shopify.server";
+import { json } from "@remix-run/node";
+import { appendFile } from "node:fs/promises";
+import { authenticate } from "../shopify.server";
 
 const PROGRESSIVE_FUNCTION_ID = "019b98d5-d1a6-7c01-a28a-200f38dd225f";
 
@@ -40,11 +40,6 @@ const PROGRESSIVE_FUNCTION_ID = "019b98d5-d1a6-7c01-a28a-200f38dd225f";
        }
      }
    `;
-
-   export async function loader({ request }) {
-     await authenticate.admin(request);
-     return json({});
-   }
 
    export async function action({ request }) {
      const { admin } = await authenticate.admin(request);
@@ -156,6 +151,19 @@ const PROGRESSIVE_FUNCTION_ID = "019b98d5-d1a6-7c01-a28a-200f38dd225f";
          };
        }
 
+       const logLine = [
+         new Date().toISOString(),
+         `code=${triggerCode}`,
+         `codeDiscountId=${codePayload.codeAppDiscount?.discountId || ""}`,
+         `automaticDiscountId=${automaticInfo?.discountId || ""}`,
+       ].join(" | ");
+
+       try {
+         await appendFile("discount-log.txt", `${logLine}\n`);
+       } catch (logError) {
+         console.error("Failed to append discount log", logError);
+       }
+
        return json({
          error: null,
          success: {
@@ -171,87 +179,4 @@ const PROGRESSIVE_FUNCTION_ID = "019b98d5-d1a6-7c01-a28a-200f38dd225f";
          { status: 500 }
        );
      }
-   }
-
-   export default function ProgressiveDiscountsPage() {
-     const actionData = useActionData();
-
-     return (
-       <div style={{ padding: 16, maxWidth: 600 }}>
-         <h1>Progressive Discount Campaign</h1>
-         <p>
-           Enter a new trigger code (e.g. <code>GETMORE</code> or{" "}
-           <code>TIEREDDISCOUNT</code>). This will create:
-         </p>
-         <ul>
-           <li>A code-based app discount using our progressive discount Function</li>
-           <li>Optionally, an automatic app discount using the same Function</li>
-         </ul>
-
-         <Form method="post">
-           <div style={{ marginBottom: 12 }}>
-             <label>
-               Trigger code:{" "}
-               <input
-                 type="text"
-                 name="triggerCode"
-                 required
-                 style={{ marginLeft: 8 }}
-               />
-             </label>
-           </div>
-           <div style={{ marginBottom: 12 }}>
-             <label>
-               <input
-                 type="checkbox"
-                 name="createAutomatic"
-                 defaultChecked
-               />{" "}
-               Also create automatic progressive discount
-             </label>
-           </div>
-           <button type="submit">Create Progressive Discounts</button>
-         </Form>
-
-         {actionData?.error && (
-           <p style={{ color: "red", marginTop: 16 }}>{actionData.error}</p>
-         )}
-         {actionData?.success && (
-           <div style={{ marginTop: 16 }}>
-             <p style={{ color: "green" }}>
-               Discounts created for code{" "}
-               <strong>{actionData.success.code}</strong>.
-             </p>
-             {actionData.success.codeDiscountId && (
-               <p>Code discount ID: {actionData.success.codeDiscountId}</p>
-             )}
-             {actionData.success.automaticDiscountId && (
-               <p>
-                 Automatic discount ID: {actionData.success.automaticDiscountId}
-               </p>
-             )}
-             <div style={{ marginTop: 8 }}>
-               <p>Next steps:</p>
-               <ol>
-                 <li>
-                   On the config page, set <strong>Trigger code</strong> to{" "}
-                   <code>{actionData.success.code}</code>.
-                 </li>
-                 <li>
-                   Choose <strong>Manual / URL code</strong> or{" "}
-                   <strong>Automatic (Function-powered)</strong> mode.
-                 </li>
-                 <li>
-                   In <strong>Discounts</strong>, ensure only the matching
-                   discount (code or automatic) is active for this mode.
-                 </li>
-                 <li>
-                   Then, don't forget to configure the tiers / percentage amounts on the config page.
-                 </li>
-               </ol>
-             </div>
-           </div>
-         )}
-       </div>
-     );
    }

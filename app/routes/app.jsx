@@ -20,12 +20,10 @@ export default function App() {
     <AppProvider isEmbeddedApp apiKey={apiKey}>
       <NavMenu>
         <Link to="/app" rel="home">
-          Home
+          Progressive Discounts
         </Link>
-        <Link to="/app/progressive-config">Configure discounts</Link>
-        <Link to="/app/progressive-discounts">
-           Create discounts
-        </Link>
+        <Link to="/app/setup-guide">Discount Setup Guide</Link>
+        <Link to="/app/theme-setup">Theme Snippet</Link>
       </NavMenu>
       <Outlet />
     </AppProvider>

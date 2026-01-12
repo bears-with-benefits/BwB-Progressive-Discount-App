@@ -22,8 +22,9 @@ export default function App() {
         <Link to="/app" rel="home">
           Home
         </Link>
+        <Link to="/app/progressive-config">Configure discounts</Link>
         <Link to="/app/progressive-discounts">
-          Progressive Discounts
+           Create discounts
         </Link>
       </NavMenu>
       <Outlet />

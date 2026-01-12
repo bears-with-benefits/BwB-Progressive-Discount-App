@@ -234,7 +234,7 @@ const PROGRESSIVE_FUNCTION_ID = "019b98d5-d1a6-7c01-a28a-200f38dd225f";
                <p>Next steps:</p>
                <ol>
                  <li>
-                   In your theme settings, set <strong>Trigger code</strong> to{" "}
+                   On the config page, set <strong>Trigger code</strong> to{" "}
                    <code>{actionData.success.code}</code>.
                  </li>
                  <li>
@@ -246,7 +246,7 @@ const PROGRESSIVE_FUNCTION_ID = "019b98d5-d1a6-7c01-a28a-200f38dd225f";
                    discount (code or automatic) is active for this mode.
                  </li>
                  <li>
-                   Then, don't forget to configure the tiers / percentage amounts in the theme settings.
+                   Then, don't forget to configure the tiers / percentage amounts on the config page.
                  </li>
                </ol>
              </div>

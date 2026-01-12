@@ -14,9 +14,9 @@ database.sqlite
 .env
 .env.*
 
-
-
-
+# Local-only Codex policy + notes
+.CODEX-SHOPIFY-POLICY.md
+.ai/
 
 /extensions/*/dist
 

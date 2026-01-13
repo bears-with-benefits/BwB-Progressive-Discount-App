@@ -88,9 +88,12 @@ export async function action({ request }) {
       const messages = (codePayload?.userErrors || [])
         .map((e) => `${(e.field || []).join(".")}: ${e.message}`)
         .join("; ");
+      const humanMessage = messages.includes("Code must be unique")
+        ? "That discount code already exists. Choose a different code or use another existing one."
+        : null;
       return json(
         {
-          error: `Failed to create code discount: ${messages}`,
+          error: humanMessage || `Failed to create code discount: ${messages}`,
           success: null,
         },
         { status: 400 }

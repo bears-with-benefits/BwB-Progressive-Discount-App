@@ -53,8 +53,7 @@ export default function SetupGuidePage() {
                     paste the snippet contents
                   </List.Item>
                   <List.Item>
-                    Add <code>{"{% render 'progressive-discount' %}"}</code> to
-                    <code>theme.liquid</code> (before <code>&lt;/body&gt;</code>)
+                    Add <code>{"{% render 'progressive-discount' %}"}</code> to theme.liquid (before <code>&lt;/body&gt;</code>)
                   </List.Item>
                 </List>
               </BlockStack>

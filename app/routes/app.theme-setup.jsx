@@ -20,7 +20,7 @@ export async function loader({ request }) {
   await authenticate.admin(request);
   const snippetPath = path.join(
     process.cwd(),
-    ".ai",
+    "snippet",
     "progressive-discount-liquid-snippet.md"
   );
   const snippetContent = await readFile(snippetPath, "utf8");

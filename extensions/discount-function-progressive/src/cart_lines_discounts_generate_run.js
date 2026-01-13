@@ -60,7 +60,7 @@ export function cartLinesDiscountsGenerateRun(input) {
 
     // If there's no matching active code and no triggering code:
     // - In manual mode, require some sort of code → bail.
-    // - In automatic mode, continue (tiers + cart values will drive behavior).
+    // - In automatic mode, continue (tiers + cart values will drive behaviour).
     if (!matchedClass && !fallbackTrigger) {
       if (!isAutomatic) {
         return { operations: ops };

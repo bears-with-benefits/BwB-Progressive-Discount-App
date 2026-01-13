@@ -1,7 +1,7 @@
 import { json } from "@remix-run/node";
 import { appendFile } from "node:fs/promises";
-import { authenticate } from "~/shopify.server";
-import { getOrRefreshFunctionId } from "~/discountFunction.server";
+import { authenticate } from "..shopify.server";
+import { getOrRefreshFunctionId } from "../discountFunction.server";
 
 const CREATE_CODE_DISCOUNT_MUTATION = `
   mutation CreateProgressiveCodeDiscount($codeAppDiscount: DiscountCodeAppInput!) {

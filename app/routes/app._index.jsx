@@ -217,13 +217,6 @@ export default function ProgressiveDiscountsPage() {
         message: 'Step 1: Add the theme snippet before configuring discounts.',
       };
     }
-    if (actionData?.success) {
-      return {
-        tone: 'success',
-        title: 'Configuration saved',
-        message: 'Next, create your discount objects in Step 3 below.',
-      };
-    }
     if (createDiscounts.data?.success) {
       return {
         tone: 'success',
@@ -334,6 +327,12 @@ export default function ProgressiveDiscountsPage() {
                     </InlineStack>
                   </FormLayout>
                 </Form>
+
+                {actionData?.success && (
+                  <Banner tone='success'>
+                    <p>{actionData.success}</p>
+                  </Banner>
+                )}
 
                 {actionData?.error && (
                   <Banner tone='critical'>

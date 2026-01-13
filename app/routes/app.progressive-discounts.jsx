@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node";
-import { appendFile } from "node:fs/promises";
+import prisma from "../db.server";
 import { authenticate } from "../shopify.server";
 import { getOrRefreshFunctionId } from "../discountFunction.server";
 
@@ -41,7 +41,7 @@ const CREATE_AUTOMATIC_DISCOUNT_MUTATION = `
 `;
 
 export async function action({ request }) {
-  const { admin } = await authenticate.admin(request);
+  const { admin, session } = await authenticate.admin(request);
   const formData = await request.formData();
 
   const triggerCode = (formData.get("triggerCode") || "").toString().trim();
@@ -142,17 +142,17 @@ export async function action({ request }) {
       };
     }
 
-    const logLine = [
-      new Date().toISOString(),
-      `code=${triggerCode}`,
-      `codeDiscountId=${codePayload.codeAppDiscount?.discountId || ""}`,
-      `automaticDiscountId=${automaticInfo?.discountId || ""}`,
-    ].join(" | ");
-
     try {
-      await appendFile("discount-log.txt", `${logLine}\n`);
+      await prisma.discountLog.create({
+        data: {
+          shop: session?.shop || null,
+          triggerCode,
+          codeDiscountId: codePayload.codeAppDiscount?.discountId || null,
+          automaticDiscountId: automaticInfo?.discountId || null,
+        },
+      });
     } catch (logError) {
-      console.error("Failed to append discount log", logError);
+      console.error("Failed to persist discount log", logError);
     }
 
     return json({

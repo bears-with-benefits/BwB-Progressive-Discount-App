@@ -38,3 +38,12 @@ model DiscountFunction {
   discountClasses String   
   updatedAt      DateTime @updatedAt
 }
+
+model DiscountLog {
+  id                  Int      @id @default(autoincrement())
+  createdAt           DateTime @default(now())
+  shop                String?
+  triggerCode         String
+  codeDiscountId      String?
+  automaticDiscountId String?
+}

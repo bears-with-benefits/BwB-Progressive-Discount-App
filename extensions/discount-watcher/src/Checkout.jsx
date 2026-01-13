@@ -1,11 +1,10 @@
-/* global shopify */
-
 import {
   reactExtension,
   useAttributes,
   useTotalAmount,
   useSubtotalAmount,
   useDiscountCodes,
+  useTranslate,
   BlockStack,
   Text,
 } from "@shopify/ui-extensions-react/checkout";
@@ -19,8 +18,7 @@ function App() {
   const subtotalAmount = useSubtotalAmount(); // subtotal before discounts
   const discountCodes = useDiscountCodes();   // entered discount codes, e.g. GETMORE
 
-  // Access Shopify's global i18n object for translations
-  const i18n = shopify.i18n;
+  const translate = useTranslate();
 
   // Map attributes into a plain object for convenience
   const attrMap = useMemo(
@@ -113,7 +111,7 @@ function App() {
 
   // Build localized message using Shopify i18n
   // "progressive.message" is defined in locales/*.json files
-  const message = i18n.translate("progressive.message", {
+  const message = translate("progressive.message", {
     percent: activeTier.percentage,
     code: triggerCode,
   });

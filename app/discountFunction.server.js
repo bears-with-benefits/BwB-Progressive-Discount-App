@@ -1,5 +1,5 @@
-import prisma from "~/db.server";
-import { authenticate } from "~/shopify.server";
+import prisma from "./db.server";
+import { authenticate } from "./shopify.server";
 
 // Call this from an action/loader where you have `request`
 export async function getOrRefreshFunctionId(request) {

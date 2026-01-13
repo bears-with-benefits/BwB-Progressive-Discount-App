@@ -1,182 +1,173 @@
 import { json } from "@remix-run/node";
 import { appendFile } from "node:fs/promises";
-import { authenticate } from "../shopify.server";
+import { authenticate } from "~/shopify.server";
+import { getOrRefreshFunctionId } from "~/discountFunction.server";
 
-const PROGRESSIVE_FUNCTION_ID = "019b98d5-d1a6-7c01-a28a-200f38dd225f";
+const CREATE_CODE_DISCOUNT_MUTATION = `
+  mutation CreateProgressiveCodeDiscount($codeAppDiscount: DiscountCodeAppInput!) {
+    discountCodeAppCreate(codeAppDiscount: $codeAppDiscount) {
+      codeAppDiscount {
+        discountId
+        title
+        status
+        codes(first: 5) {
+          nodes {
+            code
+          }
+        }
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
 
-   const CREATE_CODE_DISCOUNT_MUTATION = `
-     mutation CreateProgressiveCodeDiscount($codeAppDiscount: DiscountCodeAppInput!) {
-       discountCodeAppCreate(codeAppDiscount: $codeAppDiscount) {
-         codeAppDiscount {
-           discountId
-           title
-           status
-           codes(first: 5) {
-             nodes {
-               code
-             }
-           }
-         }
-         userErrors {
-           field
-           message
-         }
-       }
-     }
-   `;
+const CREATE_AUTOMATIC_DISCOUNT_MUTATION = `
+  mutation CreateProgressiveAutomaticDiscount($automaticAppDiscount: DiscountAutomaticAppInput!) {
+    discountAutomaticAppCreate(automaticAppDiscount: $automaticAppDiscount) {
+      automaticAppDiscount {
+        discountId
+        title
+        status
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
 
-   const CREATE_AUTOMATIC_DISCOUNT_MUTATION = `
-     mutation CreateProgressiveAutomaticDiscount($automaticAppDiscount: DiscountAutomaticAppInput!) {
-       discountAutomaticAppCreate(automaticAppDiscount: $automaticAppDiscount) {
-         automaticAppDiscount {
-           discountId
-           title
-           status
-         }
-         userErrors {
-           field
-           message
-         }
-       }
-     }
-   `;
+export async function action({ request }) {
+  const { admin } = await authenticate.admin(request);
+  const formData = await request.formData();
 
-   export async function action({ request }) {
-     const { admin } = await authenticate.admin(request);
-     const formData = await request.formData();
+  const triggerCode = (formData.get("triggerCode") || "").toString().trim();
+  const createAutomatic = formData.get("createAutomatic") === "on";
 
-     const triggerCode = (formData.get("triggerCode") || "").trim();
-     const createAutomatic = formData.get("createAutomatic") === "on";
+  if (!triggerCode) {
+    return json(
+      { error: "Trigger code is required.", success: null },
+      { status: 400 }
+    );
+  }
 
-     if (!triggerCode) {
-       return json(
-         { error: "Trigger code is required.", success: null },
-         { status: 400 }
-       );
-     }
+  try {
+    const now = new Date().toISOString();
 
-     if (!PROGRESSIVE_FUNCTION_ID || PROGRESSIVE_FUNCTION_ID === "YOUR_FUNCTION_ID_HERE") {
-       return json(
-         {
-           error:
-             "PROGRESSIVE_FUNCTION_ID is not configured. Set it in your environment.",
-           success: null,
-         },
-         { status: 500 }
-       );
-     }
+    // 0) Get current functionId dynamically (cached via discountFunction.server)
+    const functionId = await getOrRefreshFunctionId(request);
 
-     try {
-       const now = new Date().toISOString();
+    // 1) Create code-based discount
+    const codeResponse = await admin.graphql(
+      CREATE_CODE_DISCOUNT_MUTATION,
+      {
+        variables: {
+          codeAppDiscount: {
+            code: triggerCode,
+            title: `${triggerCode} Progressive (Manual)`,
+            functionId,
+            startsAt: now,
+            discountClasses: ["ORDER"],
+            combinesWith: {
+              orderDiscounts: true,
+              productDiscounts: true,
+              shippingDiscounts: true,
+            },
+          },
+        },
+      }
+    );
 
-       // 1) Create code-based discount
-       const codeResponse = await admin.graphql(
-         CREATE_CODE_DISCOUNT_MUTATION,
-         {
-           variables: {
-             codeAppDiscount: {
-               code: triggerCode,
-               title: `${triggerCode} Progressive (Manual)`,
-               functionId: PROGRESSIVE_FUNCTION_ID,
-               startsAt: now,
-               discountClasses: ["ORDER"],
-               combinesWith: {
-                 orderDiscounts: true,
-                 productDiscounts: true,
-                 shippingDiscounts: true,
-               },
-             },
-           },
-         }
-       );
+    const codeData = await codeResponse.json();
+    const codePayload = codeData.data?.discountCodeAppCreate;
 
-       const codeData = await codeResponse.json();
-       const codePayload = codeData.data?.discountCodeAppCreate;
+    if (!codePayload || (codePayload.userErrors && codePayload.userErrors.length)) {
+      const messages = (codePayload?.userErrors || [])
+        .map((e) => `${(e.field || []).join(".")}: ${e.message}`)
+        .join("; ");
+      return json(
+        {
+          error: `Failed to create code discount: ${messages}`,
+          success: null,
+        },
+        { status: 400 }
+      );
+    }
 
-       if (!codePayload || (codePayload.userErrors && codePayload.userErrors.length)) {
-         const messages = (codePayload?.userErrors || [])
-           .map((e) => `${(e.field || []).join(".")}: ${e.message}`)
-           .join("; ");
-         return json(
-           {
-             error: `Failed to create code discount: ${messages}`,
-             success: null,
-           },
-           { status: 400 }
-         );
-       }
+    let automaticInfo = null;
 
-       let automaticInfo = null;
+    // 2) Optionally create automatic discount
+    if (createAutomatic) {
+      const autoResponse = await admin.graphql(
+        CREATE_AUTOMATIC_DISCOUNT_MUTATION,
+        {
+          variables: {
+            automaticAppDiscount: {
+              title: `${triggerCode} Progressive (Automatic)`,
+              functionId,
+              startsAt: now,
+              discountClasses: ["ORDER"],
+              combinesWith: {
+                orderDiscounts: true,
+                productDiscounts: true,
+                shippingDiscounts: true,
+              },
+            },
+          },
+        }
+      );
 
-       // 2) Optionally create automatic discount
-       if (createAutomatic) {
-         const autoResponse = await admin.graphql(
-           CREATE_AUTOMATIC_DISCOUNT_MUTATION,
-           {
-             variables: {
-               automaticAppDiscount: {
-                 title: `${triggerCode} Progressive (Automatic)`,
-                 functionId: PROGRESSIVE_FUNCTION_ID,
-                 startsAt: now,
-                 discountClasses: ["ORDER"],
-                 combinesWith: {
-                   orderDiscounts: true,
-                   productDiscounts: true,
-                   shippingDiscounts: true,
-                 },
-               },
-             },
-           }
-         );
+      const autoData = await autoResponse.json();
+      const autoPayload = autoData.data?.discountAutomaticAppCreate;
 
-         const autoData = await autoResponse.json();
-         const autoPayload = autoData.data?.discountAutomaticAppCreate;
+      if (!autoPayload || (autoPayload.userErrors && autoPayload.userErrors.length)) {
+        const messages = (autoPayload?.userErrors || [])
+          .map((e) => `${(e.field || []).join(".")}: ${e.message}`)
+          .join("; ");
+        return json(
+          {
+            error:
+              `Code discount created, but failed to create automatic discount: ${messages}`,
+            success: null,
+          },
+          { status: 400 }
+        );
+      }
 
-         if (!autoPayload || (autoPayload.userErrors && autoPayload.userErrors.length)) {
-           const messages = (autoPayload?.userErrors || [])
-             .map((e) => `${(e.field || []).join(".")}: ${e.message}`)
-             .join("; ");
-           return json(
-             {
-               error:
-                 `Code discount created, but failed to create automatic discount: ${messages}`,
-               success: null,
-             },
-             { status: 400 }
-           );
-         }
+      automaticInfo = {
+        discountId: autoPayload.automaticAppDiscount?.discountId,
+      };
+    }
 
-         automaticInfo = {
-           discountId: autoPayload.automaticAppDiscount?.discountId,
-         };
-       }
+    const logLine = [
+      new Date().toISOString(),
+      `code=${triggerCode}`,
+      `codeDiscountId=${codePayload.codeAppDiscount?.discountId || ""}`,
+      `automaticDiscountId=${automaticInfo?.discountId || ""}`,
+    ].join(" | ");
 
-       const logLine = [
-         new Date().toISOString(),
-         `code=${triggerCode}`,
-         `codeDiscountId=${codePayload.codeAppDiscount?.discountId || ""}`,
-         `automaticDiscountId=${automaticInfo?.discountId || ""}`,
-       ].join(" | ");
+    try {
+      await appendFile("discount-log.txt", `${logLine}\n`);
+    } catch (logError) {
+      console.error("Failed to append discount log", logError);
+    }
 
-       try {
-         await appendFile("discount-log.txt", `${logLine}\n`);
-       } catch (logError) {
-         console.error("Failed to append discount log", logError);
-       }
-
-       return json({
-         error: null,
-         success: {
-           code: triggerCode,
-           codeDiscountId: codePayload.codeAppDiscount?.discountId,
-           automaticDiscountId: automaticInfo?.discountId || null,
-         },
-       });
-     } catch (err) {
-       console.error("Error creating progressive discounts", err);
-       return json(
-         { error: "Internal error while creating discounts.", success: null },
-         { status: 500 }
-       );
-     }
-   }
+    return json({
+      error: null,
+      success: {
+        code: triggerCode,
+        codeDiscountId: codePayload.codeAppDiscount?.discountId,
+        automaticDiscountId: automaticInfo?.discountId || null,
+      },
+    });
+  } catch (err) {
+    console.error("Error creating progressive discounts", err);
+    return json(
+      { error: "Internal error while creating discounts.", success: null },
+      { status: 500 }
+    );
+  }
+}

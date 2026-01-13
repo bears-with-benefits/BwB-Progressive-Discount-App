@@ -30,3 +30,11 @@ model Session {
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
 }
+
+model DiscountFunction {
+  id             Int      @id @default(autoincrement())
+  functionId     String
+  appKey         String
+  discountClasses String   
+  updatedAt      DateTime @updatedAt
+}

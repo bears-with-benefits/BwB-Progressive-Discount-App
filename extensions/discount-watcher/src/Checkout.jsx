@@ -4,6 +4,7 @@ import {
   useTotalAmount,
   useSubtotalAmount,
   useDiscountCodes,
+  useDiscountAllocations,
   useTranslate,
   BlockStack,
   Text,
@@ -17,6 +18,7 @@ function App() {
   const totalAmount = useTotalAmount();       // total after discounts
   const subtotalAmount = useSubtotalAmount(); // subtotal before discounts
   const discountCodes = useDiscountCodes();   // entered discount codes, e.g. GETMORE
+  const discountAllocations = useDiscountAllocations();
 
   const translate = useTranslate();
 
@@ -87,6 +89,10 @@ function App() {
     return null;
   }
 
+  const appliedCodes = useMemo(() => (
+    discountCodes || []
+  ).map((entry) => (entry?.code || "").toLowerCase()).filter(Boolean), [discountCodes]);
+
   // Determine trigger code label
   const triggerCode = useMemo(() => {
     // Prefer progression_codes attribute from your theme script
@@ -109,8 +115,47 @@ function App() {
     return fromDiscountHook || "your discount";
   }, [attrMap, discountCodes]);
 
-  // Build localized message using Shopify i18n
+    // Build localized message using Shopify i18n
   // "progressive.message" is defined in locales/*.json files
+  const normalizedTriggerCode =
+    typeof triggerCode === "string" ? triggerCode.toLowerCase() : "";
+  const triggerPrefix = normalizedTriggerCode ? `${normalizedTriggerCode}-` : "";
+
+  const allocations = Array.isArray(discountAllocations) ? discountAllocations : [];
+
+  const hasAppliedProgressiveAllocation = allocations.some((allocation) => {
+    if (!allocation || !allocation.type) return false;
+
+    if (allocation.type === "code") {
+      const code = (allocation.code || "").toLowerCase();
+      return (
+        normalizedTriggerCode &&
+        (code === normalizedTriggerCode || (triggerPrefix && code.startsWith(triggerPrefix)))
+      );
+    }
+
+    if (allocation.type === "automatic" || allocation.type === "custom") {
+      const title = (allocation.title || "").toLowerCase();
+      if (!title) return false;
+      return (
+        title.includes("progressive") ||
+        (normalizedTriggerCode && title.includes(normalizedTriggerCode))
+      );
+    }
+
+    return false;
+  });
+
+  const hasAppliedProgressiveCode = normalizedTriggerCode
+    ? appliedCodes.some((code) =>
+        code === normalizedTriggerCode || (triggerPrefix && code.startsWith(triggerPrefix))
+      )
+    : false;
+
+  if (!hasAppliedProgressiveAllocation && !hasAppliedProgressiveCode) {
+    return null;
+  }
+
   const message = translate("progressive.message", {
     percent: activeTier.percentage,
     code: triggerCode,

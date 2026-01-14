@@ -9,6 +9,9 @@
     // Make functions globally available
     window.CartUtils = window.CartUtils || {};
 
+    window.BwBProgressive = window.BwBProgressive || {};
+    window.BwBProgressive.triggerCode = '{{ trigger_code | escape }}';
+
     /**
      * Fetch the current cart (returns JSON)
      * @returns {Promise<Object>} Cart data

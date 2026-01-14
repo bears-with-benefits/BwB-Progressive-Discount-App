@@ -201,7 +201,7 @@ export default function ProgressiveDiscountsPage() {
   const modeOptions = useMemo(
     () => [
       { label: 'Disabled', value: 'off' },
-      { label: 'Manual / URL code', value: 'manual' },
+      { label: 'URL / Manual', value: 'manual' },
       { label: 'Automatic', value: 'automatic' },
     ],
     []
@@ -222,7 +222,7 @@ export default function ProgressiveDiscountsPage() {
         tone: 'success',
         title: 'Discounts created',
         message:
-          'Remember to activate the correct discount in Shopify Admin based on your selected mode (Step 4).',
+          'Remember to activate the correct discount in Shopify Admin based on your selected mode (Step 5).',
       };
     }
     return null;
@@ -273,6 +273,10 @@ export default function ProgressiveDiscountsPage() {
                 <Text tone='subdued'>
                   Configure tiers and mode. These values are stored as shop metafields and used by
                   the theme snippet.
+                </Text>
+                <Text tone='subdued'>
+                  Rebuy manual codes apply at checkout, not in-cart.
+                
                 </Text>
 
                 <Form method='post'>
@@ -397,7 +401,14 @@ export default function ProgressiveDiscountsPage() {
                         .
                       </Text>
                       <Text as='p' fontWeight='semibold'>
-                        Step 4: Activate in Shopify Admin
+                        Step 4: Enable the Discount Watcher block
+                      </Text>
+                      <Text as='p' tone='subdued'>
+                        In Shopify Admin → Settings → Checkout, click Customize and add
+                        the Discount Watcher block.
+                      </Text>
+                      <Text as='p' fontWeight='semibold'>
+                        Step 5: Activate in Shopify Admin
                       </Text>
                       <Text as='p' tone='subdued'>
                         Navigate to{' '}
@@ -407,7 +418,7 @@ export default function ProgressiveDiscountsPage() {
                         and activate the correct discount:
                       </Text>
                       <Text as='p' tone='subdued'>
-                        • <strong>Manual mode:</strong> Activate the "(Manual)" discount
+                        • <strong>URL / Manual mode:</strong> Activate the "(URL/Manual)" discount
                         <br />• <strong>Automatic mode:</strong> Activate the "(Automatic)" discount
                       </Text>
                       <Text as='p' tone='subdued'>
@@ -422,7 +433,28 @@ export default function ProgressiveDiscountsPage() {
             <Card>
               <BlockStack gap='400'>
                 <Text as='h2' variant='headingMd'>
-                  Step 4: Activate in Shopify Admin
+                  Step 4: Enable the Discount Watcher block
+                </Text>
+                <Text tone='subdued'>
+                  Add the checkout block so the discount message can appear.
+                </Text>
+
+                <BlockStack gap='200'>
+                  <Text as='p' variant='bodyMd'>
+                    Go to: <Text as='span' fontWeight='bold'>Shopify Admin → Settings → Checkout</Text>
+                  </Text>
+                  <Text tone='subdued'>
+                    Click <Text as='span' fontWeight='bold'>Customize</Text>, then add the
+                    <Text as='span' fontWeight='bold'> Discount Watcher</Text> block and save.
+                  </Text>
+                </BlockStack>
+              </BlockStack>
+            </Card>
+
+            <Card>
+              <BlockStack gap='400'>
+                <Text as='h2' variant='headingMd'>
+                  Step 5: Activate in Shopify Admin
                 </Text>
                 <Text tone='subdued'>
                   After creating discounts, you need to manually activate the correct one in your
@@ -440,12 +472,12 @@ export default function ProgressiveDiscountsPage() {
                   <Banner tone='info'>
                     <BlockStack gap='200'>
                       <Text as='p'>
-                        <strong>Manual mode:</strong> Activate the discount ending with "(Manual)"
+                        <strong>URL / Manual mode:</strong> Activate the discount ending with "(URL/Manual)"
                         and deactivate any "(Automatic)" discount.
                       </Text>
                       <Text as='p'>
                         <strong>Automatic mode:</strong> Activate the discount ending with
-                        "(Automatic)" and deactivate any "(Manual)" discount.
+                        "(Automatic)" and deactivate any "(URL/Manual)" discount.
                       </Text>
                       <Text as='p'>
                         <strong>Important:</strong> Only ONE progressive discount should be active

@@ -67,7 +67,7 @@ export async function action({ request }) {
         variables: {
           codeAppDiscount: {
             code: triggerCode,
-            title: `${triggerCode} Progressive (Manual)`,
+            title: `${triggerCode} Progressive (URL/Manual)`,
             functionId,
             startsAt: now,
             discountClasses: ["ORDER"],

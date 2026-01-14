@@ -27,12 +27,13 @@ export default function SetupGuidePage() {
       <Layout>
         <Layout.Section>
           <BlockStack gap="400">
-            <Banner title="4 steps" tone="info">
+            <Banner title="5 steps" tone="info">
               <p>
                 1) Add the theme snippet<br />
                 2) Configure tiers and mode<br />
                 3) Create discounts<br />
-                4) Activate the right discount in Shopify Admin
+                4) Enable the Discount Watcher checkout block<br />
+                5) Activate the right discount in Shopify Admin
               </p>
             </Banner>
 
@@ -69,7 +70,7 @@ export default function SetupGuidePage() {
                 </Text>
                 <List>
                   <List.Item>
-                    <strong>Mode</strong> (Manual, Automatic, or Disabled)
+                    <strong>Mode</strong> (URL / Manual, Automatic, or Disabled)
                   </List.Item>
                   <List.Item>
                     <strong>Trigger code</strong> (the customer-facing code)
@@ -83,6 +84,9 @@ export default function SetupGuidePage() {
                 <Text tone="subdued">
                   Example: <code>30/10</code>, <code>50/20</code>,{" "}
                   <code>80/40</code>. Use whole numbers only.
+                </Text>
+                <Text tone="subdued">
+                  URL/manual codes apply at checkout. Cart previews may differ.
                 </Text>
               </BlockStack>
             </Card>
@@ -102,19 +106,44 @@ export default function SetupGuidePage() {
             <Card>
               <BlockStack gap="300">
                 <Text as="h2" variant="headingMd">
-                  Step 4 — Activate in Shopify Admin
+                  Step 4 — Enable the Discount Watcher block
+                </Text>
+                <Text tone="subdued">
+                  Add the checkout block so the discount message can appear.
+                </Text>
+                <List>
+                  <List.Item>
+                    Go to Shopify Admin → Settings → Checkout
+                  </List.Item>
+                  <List.Item>
+                    Click <strong>Customize</strong> to open the checkout editor
+                  </List.Item>
+                  <List.Item>
+                    Add the <strong>Discount Watcher</strong> block to Checkout. Looks best in Order Summary, between Discounts and Total.
+                  </List.Item>
+                  <List.Item>
+                    Save changes
+                  </List.Item>
+                </List>
+              </BlockStack>
+            </Card>
+
+            <Card>
+              <BlockStack gap="300">
+                <Text as="h2" variant="headingMd">
+                  Step 5 — Activate in Shopify Admin
                 </Text>
                 <Text tone="subdued">
                   In Shopify Admin → Discounts, activate the correct discount:
                 </Text>
                 <List>
                   <List.Item>
-                    <strong>Manual mode:</strong> activate “(Manual)”, disable
+                    <strong>URL / Manual mode:</strong> activate “(URL/Manual)”, disable
                     “(Automatic)”
                   </List.Item>
                   <List.Item>
                     <strong>Automatic mode:</strong> activate “(Automatic)”, disable
-                    “(Manual)”
+                    “(URL/Manual)”
                   </List.Item>
                 </List>
               </BlockStack>
@@ -129,7 +158,7 @@ export default function SetupGuidePage() {
                 </Text>
                 <List>
                   <List.Item>
-                    <strong>Manual / URL code:</strong> customer enters the code
+                    <strong>URL / Manual code:</strong> customer enters the code
                   </List.Item>
                   <List.Item>
                     <strong>Automatic:</strong> discount applies automatically
@@ -152,12 +181,12 @@ export default function SetupGuidePage() {
                     active in Admin.
                   </List.Item>
                   <List.Item>
-                    Wrong tier? Refresh the storefront and cart after updating
-                    config.
+                    Discount message missing? Ensure the Discount Watcher block
+                    is enabled in Checkout Editor.
                   </List.Item>
                   <List.Item>
-                    Can’t see discounts? Check <code>discount-log.txt</code> for
-                    created IDs.
+                    Wrong tier? Refresh the storefront and cart after updating
+                    config.
                   </List.Item>
                 </List>
               </BlockStack>

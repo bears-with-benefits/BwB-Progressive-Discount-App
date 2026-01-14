@@ -86,7 +86,7 @@ export default function SetupGuidePage() {
                   <code>80/40</code>. Use whole numbers only.
                 </Text>
                 <Text tone="subdued">
-                  URL/manual codes apply at checkout. Cart previews may differ. Manual entry in Rebuy is a preview only.
+                  Manual codes cannot be applied in Rebuy cart. Due to the preview-only nature of the code input in Rebuy, these must be entered in the checkout to work. A localized message appears if a progressive code is entered in the Rebuy cart, prompting the customer.
                 </Text>
               </BlockStack>
             </Card>

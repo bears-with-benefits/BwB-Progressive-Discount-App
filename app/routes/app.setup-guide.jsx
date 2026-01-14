@@ -86,7 +86,7 @@ export default function SetupGuidePage() {
                   <code>80/40</code>. Use whole numbers only.
                 </Text>
                 <Text tone="subdued">
-                  URL/manual codes apply at checkout. Cart previews may differ.
+                  URL/manual codes apply at checkout. Cart previews may differ. Manual entry in Rebuy is a preview only.
                 </Text>
               </BlockStack>
             </Card>

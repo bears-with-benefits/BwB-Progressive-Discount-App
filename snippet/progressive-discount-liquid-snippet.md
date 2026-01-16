@@ -31,6 +31,20 @@
     }
 
     /**
+     * Queue cart/update.js requests to avoid 409 conflicts.
+     * @param {Function} fn - async function that performs the update
+     */
+    function queueCartUpdate(fn) {
+      if (!window.CartUpdateQueue) {
+        window.CartUpdateQueue = Promise.resolve();
+      }
+
+      const next = window.CartUpdateQueue.then(() => fn());
+      window.CartUpdateQueue = next.catch(() => {});
+      return next;
+    }
+
+    /**
      * Set multiple cart.attributes at once.
      * @param {Object} attributes - Object with key-value pairs
      * @returns {Promise<Object>} Updated cart data
@@ -53,13 +67,15 @@
       }
 
       try {
-        const res = await fetch('/cart/update.js', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({ attributes: cleanAttributes }),
+        const res = await queueCartUpdate(() => {
+          return fetch('/cart/update.js', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+            body: JSON.stringify({ attributes: cleanAttributes }),
+          });
         });
 
         if (!res.ok) {

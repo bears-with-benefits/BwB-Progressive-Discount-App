@@ -119,7 +119,7 @@ export default function SetupGuidePage() {
                     Click <strong>Customize</strong> to open the checkout editor
                   </List.Item>
                   <List.Item>
-                    Add the <strong>Discount Watcher</strong> block to Checkout. Looks best in Order Summary, between Discounts and Total.
+                    Add the <strong>Discount Watcher</strong> block to Checkout. To maintain consistency between mobile and desktop, the best place to add it is ABOVE the Express payment methods.
                   </List.Item>
                   <List.Item>
                     Save changes

@@ -254,20 +254,6 @@ export default function ProgressiveDiscountsPage() {
             <Card>
               <BlockStack gap='400'>
                 <Text as='h2' variant='headingMd'>
-                  Step 1: Add the theme snippet
-                </Text>
-                <Text tone='subdued'>
-                  The theme snippet is required to write cart attributes for the discount function.
-                </Text>
-                <InlineStack gap='300' align='start' blockAlign='center'>
-                  <Link to='/app/theme-setup'>Open theme snippet steps →</Link>
-                </InlineStack>
-              </BlockStack>
-            </Card>
-
-            <Card>
-              <BlockStack gap='400'>
-                <Text as='h2' variant='headingMd'>
                   Step 2: Configuration
                 </Text>
                 <Text tone='subdued'>

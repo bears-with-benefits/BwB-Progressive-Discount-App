@@ -235,21 +235,26 @@ export default function ProgressiveDiscountsPage() {
       <Layout>
         <Layout.Section>
           <BlockStack gap='400'>
-            <InlineStack gap='200' align='start' blockAlign='center'>
-              <Text tone='subdued'>Need full instructions?</Text>
-              <Link to='/app/setup-guide'>Open the setup guide →</Link>
-            </InlineStack>
-            {contextualMessage && (
-              <Banner title={contextualMessage.title} tone={contextualMessage.tone}>
-                <p>{contextualMessage.message}</p>
-                <p style={{ marginTop: '8px' }}>
+            <Card>
+              <BlockStack gap='400'>
+                <Text as='h2' variant='headingMd'>
+                  Step 1: Add the theme snippet
+                </Text>
+                <Text tone='subdued'>
+                  The theme snippet is required to write cart attributes for the discount function.
+                </Text>
+                <InlineStack gap='300' align='start' blockAlign='center'>
                   <Link to='/app/theme-setup'>Open theme snippet steps →</Link>
-                </p>
-                <p style={{ marginTop: '4px' }}>
-                  <Link to='/app/setup-guide'>View full setup guide →</Link>
-                </p>
-              </Banner>
-            )}
+                  <Link to='/app/setup-guide'>Open the setup guide →</Link>
+                </InlineStack>
+                {contextualMessage && (
+                  <Banner title={contextualMessage.title} tone={contextualMessage.tone}>
+                    <p>{contextualMessage.message}</p>
+                  </Banner>
+                )}
+              </BlockStack>
+            </Card>
+
 
             <Card>
               <BlockStack gap='400'>
@@ -260,11 +265,6 @@ export default function ProgressiveDiscountsPage() {
                   Configure tiers and mode. These values are stored as shop metafields and used by
                   the theme snippet.
                 </Text>
-                <Text tone='subdued'>
-                  Rebuy manual codes apply at checkout, not in-cart.
-                
-                </Text>
-
                 <Form method='post'>
                   <input type='hidden' name='shopId' value={shopId} />
                   <FormLayout>

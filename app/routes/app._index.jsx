@@ -392,39 +392,7 @@ export default function ProgressiveDiscountsPage() {
                 )}
                 {createDiscounts.data?.success && (
                   <Banner tone='success'>
-                    <BlockStack gap='200'>
-                      <Text as='p'>
-                        Discounts created for code{' '}
-                        <Text as='span' fontWeight='bold'>
-                          {createDiscounts.data.success.code}
-                        </Text>
-                        .
-                      </Text>
-                      <Text as='p' fontWeight='semibold'>
-                        Step 4: Enable the Discount Watcher block
-                      </Text>
-                      <Text as='p' tone='subdued'>
-                        In Shopify Admin → Settings → Checkout, click Customize and add
-                        the Discount Watcher block.
-                      </Text>
-                      <Text as='p' fontWeight='semibold'>
-                        Step 5: Activate in Shopify Admin
-                      </Text>
-                      <Text as='p' tone='subdued'>
-                        Navigate to{' '}
-                        <Text as='span' fontWeight='bold'>
-                          Shopify Admin → Discounts
-                        </Text>{' '}
-                        and activate the correct discount:
-                      </Text>
-                      <Text as='p' tone='subdued'>
-                        • <strong>URL / Manual mode:</strong> Activate the "(URL/Manual)" discount
-                        <br />• <strong>Automatic mode:</strong> Activate the "(Automatic)" discount
-                      </Text>
-                      <Text as='p' tone='subdued'>
-                        Ensure only ONE progressive discount is active at a time.
-                      </Text>
-                    </BlockStack>
+                    <p>Discounts created. Continue with Step 4 and Step 5 below.</p>
                   </Banner>
                 )}
               </BlockStack>
